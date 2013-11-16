@@ -8,6 +8,7 @@ RFID reader WG26 compatible: Vcc (12v), GND, Data 0, Data 1.
 Relay (optoisolated):  Vcc(5V), GND, S (control).
 
 
+
 Interfaz arduino:
 Digital pin 2: RFID reader Data 0 (Green WG26)
 Digital pin 3: RFID reader Data 1 (Yellow WG26)
@@ -18,16 +19,6 @@ Digital pin 6: buzzer (blue)
 5v: + Relay (+)
 GND: - Relay (-)
 Control relay Pin 5
-
-RF24L01+
-Digital Pin 7: CS
-Digital Pin 8: CE
-
-Digital Pin 11: MOSI
-Digital Pin 12: MISO
-Digital Pin 13: SCK
-VCC: 5v
-GND: GND
 
 Detector Garage "Door opened"
 Digital Pin 9
@@ -41,10 +32,6 @@ GND: GND Power source and RFID Reder (GND)
 ***************************************************************************************/
 #include <Wiegand.h>
 #include <SPI.h>
-#include <Mirf.h>
-#include <nRF24L01.h>
-#include <MirfHardwareSpiDriver.h>
-
 #define DoorControlPin 5 //pin to control de door
 #define DoorStatusPin 9 //pin of door status (closed/not closed)
 #define LedPin 4 //pin of door status (closed/not closed)
@@ -69,38 +56,6 @@ Serial.begin(9600);
   digitalWrite(BuzzerPin, HIGH); //inicialize pin of buzzer to LOW      
   pinMode(DoorStatusPin, INPUT_PULLUP); //config pin of STATUS Door INPUT AND PULLUP
         
-/* To change CE / CSN Pins:*/
-  
- // Mirf.cePin = 8;
- // Mirf.csnPin = 7;
- 
- // Mirf.spi = &MirfHardwareSpi;
- // Mirf.init();
-  
-  
-  
-  /*
-   * Set the payload length to sizeof(unsigned long) the
-   * return type of millis().
-   *
-   * NB: payload on client and server must be the same.
-   */
-   
-  
-  
-  /*
-   * Write channel and payload config then power up reciver.
-   */
-   
-//Mirf.payload = 1; // 1 BYTE
-
-  /*
-   * To change channel:
-   */ 
-//Mirf.setTADDR((byte *)"GARAGE"); //RECEIVING  ADDRESS
-//Mirf.channel = 90;   
-//Mirf.config();
-//Mirf.configRegister(RF_SETUP,0x06);  //1MHZ
 
 }
 
@@ -147,10 +102,6 @@ if (doorStatus == LOW && countingTime == true )
     
     if (time > CLOSE_DELAY)
     {
-    c = 32; //Alarma puerta abierta 5 min
-   // Serial.println("ALARMA Puerta abierta\n");
-    //Mirf.setTADDR((byte *)"DISPLAY"); //TO DISPLAY ADDRESS
-    //Mirf.send(&c); 
     code = 0;
     digitalWrite(DoorControlPin, HIGH); //enable door's relay 
     delay(400); //delay 400ms
@@ -163,19 +114,14 @@ if (doorStatus == LOW && countingTime == true )
 
 void allowed() //access allowed
 {
-//  Serial.println("Acceso permitido\n");
   code = 0;
   digitalWrite(DoorControlPin, HIGH); //enable door's relay 
   delay(400); //delay 400ms
   digitalWrite(DoorControlPin, LOW); //disable door's relay
-  c = 31; //access
-  //Mirf.setTADDR((byte *)"DISPLAY"); //TO DISPLAY ADDRESS
-  //Mirf.send(&c);  
 }
 
 void denied() //access denied 
 {
- // Serial.println("Acceso denegado\n");
   digitalWrite(BuzzerPin, LOW); //inicialize pin of buzzer to LOW
   delay(100);
   digitalWrite(BuzzerPin, HIGH); //inicialize pin of buzzer to L
@@ -184,12 +130,7 @@ void denied() //access denied
   delay(100);
   digitalWrite(BuzzerPin, HIGH); //inicialize pin of buzzer to L
   delay(100);
-
-//    c = 30; //denied access
-  //Mirf.setTADDR((byte *)"DISPLAY"); //TO DISPLAY ADDRESS
-  //Mirf.send(&c); 
   code = 0; 
-  
 }
 
 
