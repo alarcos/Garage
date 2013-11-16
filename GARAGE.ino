@@ -51,12 +51,6 @@ GND: GND Power source and RFID Reder (GND)
 #define BuzzerPin 6 //pin of door status (closed/not closed)
 #define CLOSE_DELAY 300000
 
-const unsigned long BERNARDO = 1224933;
-const unsigned long BERNARDO_WORK = 2785847;
-const unsigned long JOSE = 1249907;
-const unsigned long BERNI = 2757453;
-const unsigned long TANI = 2776709;
-const unsigned long INVITADO = 27994742;
 int doorStatus = 0;
 bool countingTime = true;
 unsigned long startTime;
@@ -118,13 +112,11 @@ if(wg.available())
 }
 
 switch (code) { //compare code with the allowed tags #
-    case BERNARDO: //Bernardo tag (Work keyring)
-    case BERNARDO_WORK: //Bernardo tag (Huose keyring)
-    case JOSE: //Jose tag 
-    case BERNI: //Berni
-    case TANI: //Tani
-    case INVITADO:
-      allowed();
+    case 9999999: // Put here the ID of the tags that do you want to give access
+    case 8888888:
+    case 7777777:
+    case 6666666:
+     allowed();
       break;
     case 0:
       break;
@@ -176,7 +168,7 @@ void allowed() //access allowed
   digitalWrite(DoorControlPin, HIGH); //enable door's relay 
   delay(400); //delay 400ms
   digitalWrite(DoorControlPin, LOW); //disable door's relay
-  c = 31; //acceso
+  c = 31; //access
   //Mirf.setTADDR((byte *)"DISPLAY"); //TO DISPLAY ADDRESS
   //Mirf.send(&c);  
 }
@@ -193,7 +185,7 @@ void denied() //access denied
   digitalWrite(BuzzerPin, HIGH); //inicialize pin of buzzer to L
   delay(100);
 
-    c = 30; //intento de acceso denegado
+//    c = 30; //denied access
   //Mirf.setTADDR((byte *)"DISPLAY"); //TO DISPLAY ADDRESS
   //Mirf.send(&c); 
   code = 0; 
